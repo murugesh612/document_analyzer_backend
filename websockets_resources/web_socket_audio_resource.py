@@ -1,9 +1,6 @@
-import base64
-
 from flask_socketio import SocketIO
 from injector import inject
 
-from services.local_file_service import LocalFileService
 from services.transcribe_summary_service import TranscribeSummary
 from websockets_resources.websocket_resource import WebSocketResource
 
@@ -17,11 +14,9 @@ class WebSocketAudioResource(WebSocketResource):
     def __init__(
         self,
         socketIO: SocketIO,
-        localFile_service: LocalFileService,
         transcribe_service: TranscribeSummary,
     ):
         self.socketIO = socketIO
-        self.localFile_service = localFile_service
         self.transcribe_service = transcribe_service
 
         # registering audio_track event
@@ -44,13 +39,3 @@ class WebSocketAudioResource(WebSocketResource):
         audio_data = data["base64AudioChunk"]
         if not audio_data:
             raise Exception("Audio data not found")
-
-        # Decode the Base64 string to bytes
-        audio_data = base64.b64decode(audio_data)
-
-        # Save the audio data to a file
-
-        # # Customize the filename as needed
-        filename = f"data/audio_data/{caller_id}_audio.mp3"
-        with open(filename, "ab") as f:  # 'ab' mode to append data
-            f.write(audio_data)

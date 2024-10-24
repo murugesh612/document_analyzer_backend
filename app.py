@@ -8,18 +8,18 @@ from resources.twilio_resource import twilio_blueprint
 from resources.transcribe import bp as transcribe_bp
 from resources.phone_call_resource import phone_call_blueprint
 from resources.documents_resource import documents_blueprint
-
+from services.logger import Logger
 from utils.app_config import (
     get_app_config,
     get_injector_instance,
-)  # noqa
+)
 from services.vectorstore_service import VectorStoreService
 from websockets_resources.web_rtc_signalling_server import (
     WebRTCSignallingServer,
 )
 from websockets_resources.web_socket_audio_resource import (
     WebSocketAudioResource,
-)  # noqa
+)
 
 # loading .env file
 load_dotenv()
@@ -32,6 +32,8 @@ database_service = VectorStoreService()
 
 # getting app config
 config = get_app_config(app, database_service)
+
+logger = get_injector_instance().get(Logger)
 
 # Registering the api endpoint resources
 api = Api(app)

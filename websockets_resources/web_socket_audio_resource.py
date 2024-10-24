@@ -1,22 +1,27 @@
 from flask_socketio import SocketIO
 from injector import inject
-
 from websockets_resources.websocket_resource import WebSocketResource
+from services.logger import Logger
 
 
 class WebSocketAudioResource(WebSocketResource):
     """Class to handle the audio processing using web sockets"""
 
     @inject
-    def __init__(self, socketIO: SocketIO):
+    def __init__(
+        self,
+        socketIO: SocketIO,
+        logger: Logger,
+    ):
         self.socketIO = socketIO
+        self.logger = logger
 
-        # registering audio_track event
         self.socketIO.on_event(
             "audio_chunk",
             namespace=self.signalling_server_namespace,
             handler=self.__handle_audio_track_event__,
         )
+        self.logger.info('WebSocketAudioResource service is running')
 
     def __handle_audio_track_event__(self, data):
         """Method to handle the audio track event"""
